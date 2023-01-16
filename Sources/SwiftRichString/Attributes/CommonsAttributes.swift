@@ -32,13 +32,6 @@ import Foundation
 import CoreGraphics
 import UIKit
 
-public typealias Color = UIColor
-public typealias Image = UIImage
-public typealias Font = UIFont
-public typealias FontDescriptor = UIFontDescriptor
-public typealias SymbolicTraits = UIFontDescriptor.SymbolicTraits
-public typealias LineBreak = NSLineBreakMode
-
 let FontDescriptorFeatureSettingsAttribute = UIFontDescriptor.AttributeName.featureSettings
 let FontFeatureTypeIdentifierKey = UIFontDescriptor.FeatureKey.featureIdentifier
 let FontFeatureSelectorIdentifierKey = UIFontDescriptor.FeatureKey.typeIdentifier
@@ -53,16 +46,16 @@ public enum Kerning {
     case point(CGFloat)
     case adobe(CGFloat)
     
-    public func kerning(for font: Font?) -> CGFloat {
+    public func kerning(for font: UIFont) -> CGFloat {
         switch self {
         case .point(let kernValue):
             return kernValue
         case .adobe(let adobeTracking):
             let AdobeTrackingDivisor: CGFloat = 1000.0
-            if font == nil {
-                print("Missing font for apply tracking; 0 is the fallback.")
-            }
-            return (font?.pointSize ?? 0) * (adobeTracking / AdobeTrackingDivisor)
+//            if font == nil {
+//                print("Missing font for apply tracking; 0 is the fallback.")
+//            }
+            return font.pointSize * (adobeTracking / AdobeTrackingDivisor)
         }
     }
     
@@ -146,10 +139,10 @@ public struct TraitVariant: OptionSet {
 
 extension TraitVariant {
     
-    var symbolicTraits: SymbolicTraits {
-        var traits: SymbolicTraits = []
+    var symbolicTraits: UIFontDescriptor.SymbolicTraits {
+        var traits: UIFontDescriptor.SymbolicTraits = []
         if contains(.italic) {
-            traits.insert(SymbolicTraits.italic)
+            traits.insert(.italic)
         }
         if contains(.bold) {
             traits.insert(.bold)
@@ -172,37 +165,35 @@ extension TraitVariant {
         if contains(.looseLineSpacing) {
             traits.insert(.looseLineSpacing)
         }
-        
         return traits
     }
-    
 }
 
 //MARK: - Symbolic Traits (UIFontDescriptorSymbolicTraits) Extensions
 
-extension SymbolicTraits {
-    static var italic: SymbolicTraits {
+extension UIFontDescriptor.SymbolicTraits {
+    static var italic: UIFontDescriptor.SymbolicTraits {
         return .traitItalic
     }
-    static var bold: SymbolicTraits {
+    static var bold: UIFontDescriptor.SymbolicTraits {
         return .traitBold
     }
-    static var expanded: SymbolicTraits {
+    static var expanded: UIFontDescriptor.SymbolicTraits {
         return .traitExpanded
     }
-    static var condensed: SymbolicTraits {
+    static var condensed: UIFontDescriptor.SymbolicTraits {
         return .traitCondensed
     }
-    static var vertical: SymbolicTraits {
+    static var vertical: UIFontDescriptor.SymbolicTraits {
         return .traitVertical
     }
-    static var uiOptimized: SymbolicTraits {
+    static var uiOptimized: UIFontDescriptor.SymbolicTraits {
         return .traitUIOptimized
     }
-    static var tightLineSpacing: SymbolicTraits {
+    static var tightLineSpacing: UIFontDescriptor.SymbolicTraits {
         return .traitTightLeading
     }
-    static var looseLineSpacing: SymbolicTraits {
+    static var looseLineSpacing: UIFontDescriptor.SymbolicTraits {
         return .traitLooseLeading
     }
 }

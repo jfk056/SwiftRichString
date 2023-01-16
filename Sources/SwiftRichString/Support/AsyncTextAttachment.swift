@@ -28,14 +28,8 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //    THE SOFTWARE.
 
-#if os(OSX)
-import AppKit
-#else
 import UIKit
 import MobileCoreServices
-#endif
-
-#if os(iOS)
 
 @objc public protocol AsyncTextAttachmentDelegate
 {
@@ -236,5 +230,3 @@ extension NSLayoutManager
         }
     }
 }
-
-#endif

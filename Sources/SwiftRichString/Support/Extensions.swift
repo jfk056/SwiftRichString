@@ -29,11 +29,7 @@
 //	THE SOFTWARE.
 
 import Foundation
-#if os(OSX)
-import AppKit
-#else
 import UIKit
-#endif
 
 extension String {
     
@@ -52,12 +48,12 @@ extension String {
 extension NSNumber {
 	
 	internal static func from(float: Float?) -> NSNumber? {
-		guard let float = float else { return nil }
+		guard let float else { return nil }
 		return NSNumber(value: float)
 	}
 	
 	internal static func from(int: Int?) -> NSNumber? {
-		guard let int = int else { return nil }
+		guard let int else { return nil }
 		return NSNumber(value: int)
 	}
 	
@@ -91,7 +87,7 @@ public extension Array where Array.Element == StyleProtocol {
     /// - Returns: merged style
     func mergeStyle() -> Style {
         var attributes: [NSAttributedString.Key:Any] = [:]
-        var textTransforms = [TextTransform]()
+        var textTransforms: [TextTransform] = []
         self.forEach {
             attributes.merge($0.attributes, uniquingKeysWith: {
                 (_, new) in
@@ -107,40 +103,20 @@ public extension Array where Array.Element == StyleProtocol {
 extension CGRect {
     
     init?(string: String?) {
-        guard let string = string else {
-            return nil
-        }
+        guard let string else { return nil }
         
         let components: [CGFloat] = string.components(separatedBy: ",").compactMap {
             guard let value = Float($0) else { return nil }
             return CGFloat(value)
         }
         
-        guard components.count == 4 else {
-            return nil
-        }
+        guard components.count == 4 else { return nil }
         
-        self =  CGRect(x: components[0],
-                      y: components[1],
-                      width: components[2],
-                      height: components[3])
+        self = CGRect(
+            x: components[0],
+            y: components[1],
+            width: components[2],
+            height: components[3]
+        )
     }
-    
 }
-
-#if os(OSX)
-
-public extension NSImage {
-    
-    /// PNG data of the image.
-    func pngData() -> Data? {
-        self.lockFocus()
-        let bitmap = NSBitmapImageRep(focusedViewRect: NSRect(x: 0, y: 0, width: size.width, height: size.height))
-        let pngData = bitmap!.representation(using: .png, properties: [:])
-        self.unlockFocus()
-        return pngData
-    }
-    
-}
-
-#endif

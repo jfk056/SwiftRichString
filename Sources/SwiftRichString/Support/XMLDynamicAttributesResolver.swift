@@ -29,11 +29,7 @@
 //    THE SOFTWARE.
 
 import Foundation
-#if os(OSX)
-import AppKit
-#else
 import UIKit
-#endif
 
 // MARK: - XMLDynamicAttributesResolver
 
@@ -47,7 +43,7 @@ public protocol XMLDynamicAttributesResolver {
     /// - Parameters:
     ///   - name: name of the image to get.
     ///   - fromStyle: caller instance of `StyleXML.
-    func image(name: String, attributes: [String: String]?, fromStyle style: StyleXML) -> Image?
+    func image(name: String, attributes: [String: String]?, fromStyle style: StyleXML) -> UIImage?
     
     /// You are receiving this event when SwiftRichString correctly render an existing tag but the tag
     /// contains extra attributes you may want to handle.
@@ -58,7 +54,7 @@ public protocol XMLDynamicAttributesResolver {
     ///   - attributedString: attributed string. You will receive it after the style is applied.
     ///   - xmlStyle: xml style information with tag, applied style and the dictionary with extra attributes.
     ///   - fromStyle: caller instance of `StyleXML.
-    func applyDynamicAttributes(to attributedString: inout AttributedString, xmlStyle: XMLDynamicStyle, fromStyle: StyleXML)
+    func applyDynamicAttributes(to attributedString: inout NSMutableAttributedString, xmlStyle: XMLDynamicStyle, fromStyle: StyleXML)
     
     /// You will receive this event when SwiftRichString can't found a received style name into provided group tags.
     /// You can decide to handle it. The default receiver for example uses the `a` tag to render passed url if `href`
@@ -69,15 +65,15 @@ public protocol XMLDynamicAttributesResolver {
     ///   - attributedString: attributed string received.
     ///   - attributes: attributes of the tag received.
     ///   - fromStyle: caller instance of `StyleXML.
-    func styleForUnknownXMLTag(_ tag: String, to attributedString: inout AttributedString, attributes: [String: String]?, fromStyle: StyleXML)
+    func styleForUnknownXMLTag(_ tag: String, to attributedString: inout NSMutableAttributedString, attributes: [String: String]?, fromStyle: StyleXML)
 
 }
 
 extension XMLDynamicAttributesResolver {
     
-    public func image(name: String, attributes: [String: String]?, fromStyle style: StyleXML) -> Image? {
+    public func image(name: String, attributes: [String: String]?, fromStyle style: StyleXML) -> UIImage? {
         guard let mappedImage = style.imageProvider?(name, attributes) else {
-            return Image(named: name) // xcassets fallback
+            return UIImage(named: name) // xcassets fallback
         }
 
         // origin xml style contains mapped image.
@@ -92,45 +88,42 @@ open class StandardXMLAttributesResolver: XMLDynamicAttributesResolver {
     
     public init() {}
     
-    open func applyDynamicAttributes(to attributedString: inout AttributedString, xmlStyle: XMLDynamicStyle, fromStyle: StyleXML) {
+    open func applyDynamicAttributes(to attributedString: inout NSMutableAttributedString, xmlStyle: XMLDynamicStyle, fromStyle: StyleXML) {
         let finalStyleToApply = Style()
         xmlStyle.enumerateAttributes { key, value  in
             switch key {
-                case "color": // color support
-                    finalStyleToApply.color = Color(hexString: value)
+            case "color": // color support
+                finalStyleToApply.color = UIColor(hexString: value)
                 
-                default: break
+            default: break
             }
         }
         self.styleForUnknownXMLTag(xmlStyle.tag, to: &attributedString, attributes: xmlStyle.xmlAttributes, fromStyle: fromStyle)
         attributedString.add(style: finalStyleToApply)
     }
     
-    open func styleForUnknownXMLTag(_ tag: String, to attributedString: inout AttributedString, attributes: [String: String]?, fromStyle: StyleXML) {
+    open func styleForUnknownXMLTag(_ tag: String, to attributedString: inout NSMutableAttributedString, attributes: [String: String]?, fromStyle: StyleXML) {
         let finalStyleToApply = Style()
         switch tag {
             case "a": // href support
-                finalStyleToApply.linkURL = URL(string: attributes?["href"])
-            
+            if let href: String = attributes?["href"] {
+                finalStyleToApply.linkURL = URL(string: href)
+            }
             case "img":
-                #if os(iOS)
-                // Remote Image URL support
-                if let url = attributes?["url"] {
-                    if let image = AttributedString(imageURL: url, bounds: attributes?["rect"]) {
-                        attributedString.append(image)
-                    }
+            /// Remote image
+            if let url: String = attributes?["url"] {
+                if let image: NSMutableAttributedString = NSMutableAttributedString(imageURL: url, bounds: attributes?["rect"]) {
+                    attributedString.append(image)
                 }
-                #endif
+            }
                 
-                #if os(iOS) || os(OSX)
-                // Local Image support
-                if let imageName = attributes?["named"] {
-                    if let image = image(name: imageName, attributes: attributes, fromStyle: fromStyle),
-                        let imageString = AttributedString(image: image, bounds: attributes?["rect"]) {
-                        attributedString.append(imageString)
-                    }
+            /// Local image
+            if let imageName: String = attributes?["named"] {
+                if let image: UIImage = image(name: imageName, attributes: attributes, fromStyle: fromStyle),
+                   let imageString: NSMutableAttributedString = NSMutableAttributedString(image: image, bounds: attributes?["rect"]) {
+                    attributedString.append(imageString)
                 }
-                #endif
+            }
             
             default:
                 break

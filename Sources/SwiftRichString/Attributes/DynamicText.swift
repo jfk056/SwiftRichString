@@ -28,7 +28,6 @@
 //    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //    THE SOFTWARE.
 
-#if os(tvOS) || os(watchOS) || os(iOS)
 import UIKit
 
 /// DynamicText encapsulate the attributes for fonts to automatically scale to match the current Dynamic Type settings. It uses UIFontMetrics.
@@ -38,12 +37,10 @@ public class DynamicText {
     /// You can pass any `UIFont.TextStyle` value, if nil UIFontMetrics.default will be used,
     /// which uses the body text style.
     public var style: UIFont.TextStyle?
-    
-    #if os(OSX) || os(iOS) || os(tvOS)
+
     /// The trait collection to use when determining compatibility. The returned
     /// font is appropriate for use in an interface that adopts the specified traits.
     public var traitCollection: UITraitCollection?
-    #endif
     
     /// Set the maximum size
     /// allowed for the font/text. Use this value to constrain the font to
@@ -52,8 +49,6 @@ public class DynamicText {
     
     public typealias InitHandler = ((DynamicText) -> (Void))
     
-    //MARK: - INIT
-    
     /// Initialize a new dynamic text with optional configuration handler callback.
     ///
     /// - Parameter handler: configuration handler callback.
@@ -61,5 +56,3 @@ public class DynamicText {
         handler?(self)
     }
 }
-
-#endif

@@ -76,7 +76,7 @@ public class XMLStringBuilder: NSObject, XMLParserDelegate {
     }
     
     /// Produced final attributed string
-    private var attributedString: AttributedString
+    private var attributedString: NSMutableAttributedString
     
     /// Base style to apply as common style of the entire string.
     private var baseStyle: StyleProtocol? {
@@ -132,7 +132,7 @@ public class XMLStringBuilder: NSObject, XMLParserDelegate {
     }
     
     /// Parse and generate attributed string.
-    public func parse() throws -> AttributedString {
+    public func parse() throws -> NSMutableAttributedString {
         guard xmlParser.parse() else {
             let line = xmlParser.lineNumber
             let shiftColumn = (line == 1 && options.contains(.doNotWrapXML) == false)
@@ -186,7 +186,7 @@ public class XMLStringBuilder: NSObject, XMLParserDelegate {
             return // to support images tags
         }
        */
-        var newAttributedString = AttributedString(string: currentString ?? "")
+        var newAttributedString = NSMutableAttributedString(string: currentString ?? "")
         for xmlStyle in xmlStylers {
             // Apply
             if let style = xmlStyle.style {

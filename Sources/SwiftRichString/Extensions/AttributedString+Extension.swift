@@ -29,16 +29,12 @@
 //	THE SOFTWARE.
 
 import Foundation
-#if os(OSX)
-import AppKit
-#else
 import UIKit
-#endif
 
 //MARK: - AttributedString Extension
 
 // The following methods are used to alter an existing attributed string with attributes specified by styles.
-public extension AttributedString {
+public extension NSMutableAttributedString {
 	
 	/// Append existing style's attributed, registered in `StyleManager`, to the receiver string (or substring).
 	///
@@ -48,7 +44,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func add(style: String, range: NSRange? = nil) -> AttributedString {
+	func add(style: String, range: NSRange? = nil) -> NSMutableAttributedString {
 		guard let style = Styles[style] else { return self }
 		return style.add(to: self, range: range)
 	}
@@ -61,7 +57,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func add(styles: [String], range: NSRange? = nil) -> AttributedString {
+	func add(styles: [String], range: NSRange? = nil) -> NSMutableAttributedString {
 		guard let styles = Styles[styles] else { return self }
 		return styles.mergeStyle().set(to: self, range: range)
 	}
@@ -74,7 +70,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func set(style: String, range: NSRange? = nil) -> AttributedString {
+	func set(style: String, range: NSRange? = nil) -> NSMutableAttributedString {
 		guard let style = Styles[style] else { return self }
 		return style.set(to: self, range: range)
 	}
@@ -88,7 +84,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func set(styles: [String], range: NSRange? = nil) -> AttributedString {
+	func set(styles: [String], range: NSRange? = nil) -> NSMutableAttributedString {
 		guard let styles = Styles[styles] else { return self }
 		return styles.mergeStyle().set(to: self, range: range)
 	}
@@ -100,7 +96,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func add(style: StyleProtocol, range: NSRange? = nil) -> AttributedString {
+	func add(style: StyleProtocol, range: NSRange? = nil) -> NSMutableAttributedString {
 		return style.add(to: self, range: range)
 	}
 	
@@ -112,7 +108,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func add(styles: [StyleProtocol], range: NSRange? = nil) -> AttributedString {
+	func add(styles: [StyleProtocol], range: NSRange? = nil) -> NSMutableAttributedString {
 		return styles.mergeStyle().add(to: self, range: range)
 	}
 	
@@ -123,7 +119,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func set(style: StyleProtocol, range: NSRange? = nil) -> AttributedString {
+	func set(style: StyleProtocol, range: NSRange? = nil) -> NSMutableAttributedString {
 		return style.set(to: self, range: range)
 	}
 	
@@ -135,7 +131,7 @@ public extension AttributedString {
 	///   - range: 	range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: 	same instance of the receiver with - eventually - modified attributes.
 	@discardableResult
-	func set(styles: [StyleProtocol], range: NSRange? = nil) -> AttributedString {
+	func set(styles: [StyleProtocol], range: NSRange? = nil) -> NSMutableAttributedString {
 		return styles.mergeStyle().set(to: self, range: range)
 	}
 	
@@ -170,32 +166,8 @@ public extension AttributedString {
 ///   - lhs: attributed string.
 ///   - rhs: attributed string.
 /// - Returns: new attributed string concatenation of two strings.
-public func + (lhs: AttributedString, rhs: AttributedString) -> AttributedString {
+public func + (lhs: NSMutableAttributedString, rhs: NSMutableAttributedString) -> NSMutableAttributedString {
 	let final = NSMutableAttributedString(attributedString: lhs)
 	final.append(rhs)
-	return final
-}
-
-/// Merge a plain string with an attributed string to produce a new attributed string.
-///
-/// - Parameters:
-///   - lhs: plain string.
-///   - rhs: attributed string.
-/// - Returns: new attributed string.
-public func + (lhs: String, rhs: AttributedString) -> AttributedString {
-	let final = NSMutableAttributedString(string: lhs)
-	final.append(rhs)
-	return final
-}
-
-/// Merge an attributed string with a plain string to produce a new attributed string.
-///
-/// - Parameters:
-///   - lhs: attributed string.
-///   - rhs: plain string.
-/// - Returns: new attributed string.
-public func + (lhs: AttributedString, rhs: String) -> AttributedString {
-	let final = NSMutableAttributedString(attributedString: lhs)
-	final.append(NSMutableAttributedString(string: rhs))
 	return final
 }

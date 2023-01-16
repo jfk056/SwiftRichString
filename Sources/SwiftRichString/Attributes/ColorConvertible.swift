@@ -31,32 +31,14 @@
 import Foundation
 import UIKit
 
-// MARK: - ColorConvertible
-
-/// `ColorConvertible` protocol conformance is used to pass your own instance of a color representable object
-/// as color's attributes for several properties inside a style. Style get the color instance from your object
-/// and use it inside for string attributes.
-/// Both `String` and `UIColor`/`NSColor` already conforms this protocol.
-public protocol ColorConvertible {
-    /// Transform a instance of a `ColorConvertible` conform object to a valid `UIColor`/`NSColor`.
-    var color: Color { get }
-}
-
-// MARK: - ColorConvertible for `UIColor`/`NSColor`
-
-extension Color: ColorConvertible {
-    
-    /// Just return itself
-    public var color: Color {
-        return self
-    }
+extension UIColor {
     
     /// Initialize a new color from HEX string representation.
     ///
     /// - Parameter hexString: hex string
     public convenience init(hexString: String) {
-        let hexString = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
-        let scanner   = Scanner(string: hexString)
+        let hexString: String = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
+        let scanner: Scanner   = Scanner(string: hexString)
         
         if hexString.hasPrefix("#") {
             scanner.scanLocation = 1
@@ -76,7 +58,7 @@ extension Color: ColorConvertible {
     /// - Parameters:
     ///   - hex: hex value
     ///   - alphaChannel: `true` to include alpha channel, `false` to make it opaque.
-    public convenience init(hex: UInt32, useAlpha alphaChannel: Bool = false) {
+    convenience init(hex: UInt32, useAlpha alphaChannel: Bool = false) {
         let mask: UInt32 = UInt32(0xFF)
         
         let r: UInt32 = hex >> (alphaChannel ? 24 : 16) & mask
@@ -90,17 +72,6 @@ extension Color: ColorConvertible {
         let alpha: CGFloat = CGFloat(a) / 255
         
         self.init(red: red, green: green, blue: blue, alpha: alpha)
-    }
-    
-}
-
-// MARK: - ColorConvertible for `String`
-
-extension String: ColorConvertible {
-    
-    /// Transform a string to a color. String must be a valid HEX representation of the color.
-    public var color: Color {
-        return Color(hexString: self)
     }
 }
 

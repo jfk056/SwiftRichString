@@ -39,10 +39,8 @@ public extension NSRange {
 	func `in`(_ str: String) -> Range<String.Index>? {
 		return Range(self, in: str)
 	}
-	
 }
 
-// MARK: - Subrange Subscript
 public extension String {
 	
 	/// Convert an NSRange to String range.

@@ -43,7 +43,7 @@ public protocol FontInfoAttribute {
 
 public extension FontInfoAttribute {
 	
-	func attributes() -> [[FontDescriptor.FeatureKey: Any]] {
+	func attributes() -> [[UIFontDescriptor.FeatureKey: Any]] {
 		let featureSettings = self.featureSettings()
 		return featureSettings.map {
 			return [
@@ -58,26 +58,24 @@ public extension FontInfoAttribute {
 
 // MARK: - UIFont/NSFont with FontInfoAttribute
 
-internal extension Font {
+internal extension UIFont {
 	
 	/// Instance a new font instance with passed attributes.
 	///
 	/// - Parameter attributes: font info attributes
 	/// - Returns: a valid instance of the font with specified attributes.
-	func withAttributes(_ attributes: [FontInfoAttribute]) -> Font {
-		let newFeatures: [[FontDescriptor.FeatureKey : Any]] = attributes.flatMap { $0.attributes() }
-		guard newFeatures.count > 0 else {
-			return self
-		}
+	func withAttributes(_ attributes: [FontInfoAttribute]) -> UIFont {
+		let newFeatures: [[UIFontDescriptor.FeatureKey : Any]] = attributes.flatMap { $0.attributes() }
+		guard !newFeatures.isEmpty else { return self }
 		
-		var fontAttributes = fontDescriptor.fontAttributes
-		var features = fontAttributes[FontDescriptorFeatureSettingsAttribute] as? [[FontDescriptor.FeatureKey: Any]] ?? []
+        var fontAttributes: [UIFontDescriptor.AttributeName : Any] = fontDescriptor.fontAttributes
+        var features = fontAttributes[.featureSettings] as? [[UIFontDescriptor.FeatureKey: Any]] ?? []
 		
 		features.append(contentsOf: newFeatures)
 		fontAttributes[FontDescriptorFeatureSettingsAttribute] = features
 		
-		let descriptor = FontDescriptor(fontAttributes: fontAttributes)
-        return Font(descriptor: descriptor, size: pointSize)
+		let descriptor = UIFontDescriptor(fontAttributes: fontAttributes)
+        return UIFont(descriptor: descriptor, size: pointSize)
 	}
 }
 
@@ -94,12 +92,18 @@ internal extension Font {
 public enum NumberCase: FontInfoAttribute {
 	case upper
 	case lower
+    
+    var numberSelector: Int {
+        switch self {
+        case .upper:
+            return kUpperCaseNumbersSelector
+        case .lower:
+            return kLowerCaseNumbersSelector
+        }
+    }
 	
 	public func featureSettings() -> [(type: Int, selector: Int)] {
-		switch self {
-		case .upper:	return [(type: kNumberCaseType, selector: kUpperCaseNumbersSelector)]
-		case .lower:	return [(type: kNumberCaseType, selector: kLowerCaseNumbersSelector)]
-		}
+        return [(type: kNumberCaseType, selector: self.numberSelector)]
 	}
 }
 
@@ -120,8 +124,10 @@ public enum NumberSpacing: FontInfoAttribute {
 	
 	public func featureSettings() -> [(type: Int, selector: Int)] {
 		switch self {
-		case .monospaced:		return [(type: kNumberSpacingType, selector: kMonospacedNumbersSelector)]
-		case .proportional:		return [(type: kNumberSpacingType, selector: kProportionalNumbersSelector)]
+		case .monospaced:
+            return [(type: kNumberSpacingType, selector: kMonospacedNumbersSelector)]
+		case .proportional:
+            return [(type: kNumberSpacingType, selector: kProportionalNumbersSelector)]
 		}
 	}
 }
@@ -173,9 +179,12 @@ public enum Fractions: FontInfoAttribute {
 	
 	public func featureSettings() -> [(type: Int, selector: Int)] {
 		switch self {
-		case .disabled:		return [(type: kFractionsType, selector: kNoFractionsSelector)]
-		case .diagonal:		return [(type: kFractionsType, selector: kDiagonalFractionsSelector)]
-		case .vertical:		return [(type: kFractionsType, selector: kVerticalFractionsSelector)]
+		case .disabled:
+            return [(type: kFractionsType, selector: kNoFractionsSelector)]
+		case .diagonal:
+            return [(type: kFractionsType, selector: kDiagonalFractionsSelector)]
+		case .vertical:
+            return [(type: kFractionsType, selector: kVerticalFractionsSelector)]
 		}
 	}
 }

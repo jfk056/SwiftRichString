@@ -29,11 +29,7 @@
 //	THE SOFTWARE.
 
 import Foundation
-#if os(OSX)
-import AppKit
-#else
 import UIKit
-#endif
 
 //MARK: - String Extension
 
@@ -49,7 +45,7 @@ public extension String {
 	///   - style: name of style registered in `StylesManager` singleton.
 	///   - range: range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: rendered attributed string, `nil` if style is not registered.
-	func set(style: String, range: NSRange? = nil) -> AttributedString? {
+	func set(style: String, range: NSRange? = nil) -> NSMutableAttributedString? {
 		return StylesManager.shared[style]?.set(to: self, range: range)
 	}
 	
@@ -63,7 +59,7 @@ public extension String {
 	///   - styles: ordered list of styles name to apply. Styles must be registed in `StylesManager`.
 	///   - range: range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: attributed string, `nil` if all specified styles required are not registered.
-	func set(styles: [String], range: NSRange? = nil) -> AttributedString? {
+	func set(styles: [String], range: NSRange? = nil) -> NSMutableAttributedString? {
 		return StylesManager.shared[styles]?.mergeStyle().set(to: self, range: range)
 	}
 	
@@ -73,7 +69,7 @@ public extension String {
 	///   - style: style to apply.
 	///   - range: range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: rendered attributed string.
-	func set(style: StyleProtocol, range: NSRange? = nil) -> AttributedString {
+	func set(style: StyleProtocol, range: NSRange? = nil) -> NSMutableAttributedString {
 		return style.set(to: self, range: range)
 	}
 	
@@ -86,7 +82,7 @@ public extension String {
 	///   - styles: ordered list of styles to apply. Styles must be registed in `StylesManager`.
 	///   - range: range of substring where style is applied, `nil` to use the entire string.
 	/// - Returns: attributed string.
-	func set(styles: [StyleProtocol], range: NSRange? = nil) -> AttributedString {
+	func set(styles: [StyleProtocol], range: NSRange? = nil) -> NSMutableAttributedString {
 		return styles.mergeStyle().set(to: self, range: range)
 	}
 	
@@ -100,7 +96,7 @@ public extension String {
 ///   - lhs: plain string.
 ///   - rhs: style to apply.
 /// - Returns: rendered attributed string instance
-public func + (lhs: String, rhs: StyleProtocol) -> AttributedString {
+public func + (lhs: String, rhs: StyleProtocol) -> NSMutableAttributedString {
 	return rhs.set(to: lhs, range: nil)
 }
 

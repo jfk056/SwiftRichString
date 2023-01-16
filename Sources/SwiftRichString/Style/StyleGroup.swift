@@ -29,11 +29,7 @@
 //    THE SOFTWARE.
 
 import Foundation
-#if os(OSX)
-import AppKit
-#else
 import UIKit
-#endif
 
 public typealias StyleGroup = StyleXML
 
@@ -41,7 +37,9 @@ public class StyleXML: StyleProtocol {
     
     // The following attributes are ignored for StyleXML because are read from the sub styles.
     public var attributes: [NSAttributedString.Key : Any] = [:]
+
     public var fontData: FontData? = nil
+
     public var textTransforms: [TextTransform]? = nil
     
     /// Ordered dictionary of the styles inside the group
@@ -57,7 +55,7 @@ public class StyleXML: StyleProtocol {
     
     /// Image provider is called to provide custom image when `StyleXML` encounter a `img` tag image.
     /// If not implemented the image is automatically searched inside any bundled `xcassets`.
-    public var imageProvider: ((_ name: String, _ attributes: [String: String]?) -> Image?)? = nil
+    public var imageProvider: ((_ name: String, _ attributes: [String: String]?) -> UIImage?)? = nil
     
     /// Dynamic attributes resolver.
     /// By default the `StandardXMLAttributesResolver` instance is used.
@@ -108,7 +106,7 @@ public class StyleXML: StyleProtocol {
     ///   - source: source to render.
     ///   - range: range of characters to render, `nil` to apply rendering to the entire content.
     /// - Returns: attributed string
-    public func set(to source: String, range: NSRange?) -> AttributedString {
+    public func set(to source: String, range: NSRange?) -> NSMutableAttributedString {
         let attributed = NSMutableAttributedString(string: source)
         return self.apply(to: attributed, adding: true, range: range)
     }
@@ -119,7 +117,7 @@ public class StyleXML: StyleProtocol {
     ///   - source: source attributed string.
     ///   - range: range of parse.
     /// - Returns: same istance of `source` with applied styles.
-    public func add(to source: AttributedString, range: NSRange?) -> AttributedString {
+    public func add(to source: NSMutableAttributedString, range: NSRange?) -> NSMutableAttributedString {
         return self.apply(to: source, adding: true, range: range)
     }
     
@@ -129,7 +127,7 @@ public class StyleXML: StyleProtocol {
     ///   - source: source attributed string.
     ///   - range: range of parse.
     /// - Returns: same istance of `source` with applied styles.
-    public func set(to source: AttributedString, range: NSRange?) -> AttributedString {
+    public func set(to source: NSMutableAttributedString, range: NSRange?) -> NSMutableAttributedString {
         return self.apply(to: source, adding: false, range: range)
     }
     
@@ -140,7 +138,7 @@ public class StyleXML: StyleProtocol {
     ///   - adding: `true` to add styles defined to existing styles, `false` to replace any existing style inside tags.
     ///   - range: range of operation, `nil` for entire string.
     /// - Returns: modified attributed string, same instance of the `source`.
-    public func apply(to attrStr: AttributedString, adding: Bool, range: NSRange?) -> AttributedString {
+    public func apply(to attrStr: NSMutableAttributedString, adding: Bool, range: NSRange?) -> NSMutableAttributedString {
         do {
             let xmlParser = XMLStringBuilder(styleXML: self, string: attrStr.string)
             return try xmlParser.parse()
@@ -149,5 +147,4 @@ public class StyleXML: StyleProtocol {
             return attrStr
         }
     }
-    
 }

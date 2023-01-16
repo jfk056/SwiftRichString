@@ -32,16 +32,16 @@ import Foundation
 
 @resultBuilder
 public class AttributedStringBuilder {
-    public static func buildBlock(_ components: AttributedString...) -> AttributedString {
+    public static func buildBlock(_ components: NSMutableAttributedString...) -> NSMutableAttributedString {
         let result: NSMutableAttributedString = NSMutableAttributedString(string: "")
         
         return components.reduce(into: result) { (result, current) in result.append(current) }
     }
 }
 
-extension AttributedString {
+extension NSMutableAttributedString {
     
-    public class func composing(@AttributedStringBuilder _ parts: () -> AttributedString) -> AttributedString {
+    public class func composing(@AttributedStringBuilder _ parts: () -> NSMutableAttributedString) -> NSMutableAttributedString {
         return parts()
     }
     
