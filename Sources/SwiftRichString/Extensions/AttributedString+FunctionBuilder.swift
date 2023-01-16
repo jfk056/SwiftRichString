@@ -30,10 +30,10 @@
 
 import Foundation
 
-@_functionBuilder
+@resultBuilder
 public class AttributedStringBuilder {
     public static func buildBlock(_ components: AttributedString...) -> AttributedString {
-        let result = NSMutableAttributedString(string: "")
+        let result: NSMutableAttributedString = NSMutableAttributedString(string: "")
         
         return components.reduce(into: result) { (result, current) in result.append(current) }
     }

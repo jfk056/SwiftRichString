@@ -65,7 +65,7 @@ public struct XMLParsingOptions: OptionSet {
 public class XMLStringBuilder: NSObject, XMLParserDelegate {
         
     // MARK: Private Properties
-    private static let topTag = "source"
+    private static let topTag: String = "source"
     
     /// Parser engine.
     private var xmlParser: XMLParser
@@ -89,7 +89,7 @@ public class XMLStringBuilder: NSObject, XMLParserDelegate {
     }
     
     /// Styles applied at each fragment.
-    private var xmlStylers = [XMLDynamicStyle]()
+    private var xmlStylers: [XMLDynamicStyle] = []
     
     /// XML Attributes resolver
     public var xmlAttributesResolver: XMLDynamicAttributesResolver {

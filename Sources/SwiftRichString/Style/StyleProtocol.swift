@@ -32,7 +32,7 @@ import Foundation
 
 public typealias AttributedString = NSMutableAttributedString
 
-public protocol StyleProtocol: class {
+public protocol StyleProtocol: AnyObject {
 	
 	/// Return the attributes of the style in form of dictionary `NSAttributedStringKey`/`Any`.
 	var attributes: [NSAttributedString.Key : Any] { get }

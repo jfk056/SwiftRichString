@@ -31,10 +31,7 @@
 // Portions of this file is taken from BonMot project.
 
 import Foundation
-
-// This is not supported on watchOS
-#if os(iOS) || os(tvOS) || os(OSX)
-
+import UIKit
 import CoreText
 
 /// Protocol to provide values to be used by `UIFontFeatureTypeIdentifierKey`
@@ -68,7 +65,7 @@ internal extension Font {
 	/// - Parameter attributes: font info attributes
 	/// - Returns: a valid instance of the font with specified attributes.
 	func withAttributes(_ attributes: [FontInfoAttribute]) -> Font {
-		let newFeatures = attributes.flatMap { $0.attributes() }
+		let newFeatures: [[FontDescriptor.FeatureKey : Any]] = attributes.flatMap { $0.attributes() }
 		guard newFeatures.count > 0 else {
 			return self
 		}
@@ -80,13 +77,8 @@ internal extension Font {
 		fontAttributes[FontDescriptorFeatureSettingsAttribute] = features
 		
 		let descriptor = FontDescriptor(fontAttributes: fontAttributes)
-		#if os(OSX)
-			return Font(descriptor: descriptor, size: pointSize)!
-		#else
-			return Font(descriptor: descriptor, size: pointSize)
-		#endif
+        return Font(descriptor: descriptor, size: pointSize)
 	}
-	
 }
 
 //MARK: - NumberCase
@@ -562,5 +554,3 @@ extension ContextualAlternates: FontInfoAttribute {
 public func + (lhs: ContextualAlternates, rhs: ContextualAlternates) -> ContextualAlternates {
 	return lhs.byAdding(other: rhs)
 }
-
-#endif
